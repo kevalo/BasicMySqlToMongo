@@ -57,10 +57,46 @@ document.getElementById("btn").addEventListener("click", function(){
 			mongoLine = `db.${tableName[2]}.remove(`;
 
 			// Get the condition
-			let condition = line.match(/where([A-z\s=0-9\'@\.-]*)/);
+			let condition = line.match(/where([A-z\s>=<0-9\'@\.,\-\(\)]*)/);
 			if(condition){
-				condition = condition[0].replace("where", "").replace(/\s/g, "").split("=");
-				mongoLine += `{${condition[0]}:{$eq:${condition[1].replace(/\'/g, '"')}}}`;
+				condition[0] = condition[0].replace("where", "").replace(/\s/g, "");
+				let mysqlOperator = "";
+				let mongoOperator = "";
+				if(condition[0].indexOf('>=') !== -1){
+					mysqlOperator = ">=";
+					mongoOperator = "$gte";
+				} else if(condition[0].indexOf('<=') !== -1){
+					mysqlOperator = "<=";
+					mongoOperator = "$let";
+				} else if(condition[0].indexOf('=') !== -1){
+					mysqlOperator = "=";
+					mongoOperator = "$eq";
+
+				} else if(condition[0].indexOf('>') !== -1){
+					mysqlOperator = ">";
+					mongoOperator = "$gt";
+
+				} else if(condition[0].indexOf('<') !== -1){
+					mysqlOperator = "<";
+					mongoOperator = "$lt";
+				} else if(condition[1].indexOf('not in') !== -1){
+					mysqlOperator = "not in";
+					mongoOperator = "$nin";
+				} else if(condition[1].indexOf('in') !== -1){
+					mysqlOperator = "in";
+					mongoOperator = "$in";
+				}
+
+				
+				if(mysqlOperator == "in" || mysqlOperator == "not in"){
+					condition = condition[1].split(mysqlOperator);
+					mongoLine += `{${condition[0]}:{${mongoOperator}:[${condition[1].replace(/[()]/g, '')}]}}`;
+				}else{
+					condition = condition[0].split(mysqlOperator);
+					mongoLine += `{${condition[0]}:{${mongoOperator}:${condition[1]}}}`;
+				}
+				
+				
 			}
 			mongoLine += ");\n";
 		}

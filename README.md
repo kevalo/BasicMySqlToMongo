@@ -3,7 +3,7 @@ Basic "update" and "delete" queries convertion from MySql to MongoDB.
 
 Just clone or download the code and open the index.html file on your browser.
 
-### Version: 0.0.1
+### Version: 0.0.2
 
 ### Example:
 MySql:

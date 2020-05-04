@@ -1,6 +1,8 @@
 # Basic MySql To MongoDB
 Basic "update" and "delete" queries convertion from MySql to MongoDB.
 
+*this is a hard-coded script*
+
 Just clone or download the code and open the index.html file on your browser.
 
 ### Version: 0.0.2
